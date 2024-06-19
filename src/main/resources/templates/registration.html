@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Registration</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	crossorigin="anonymous">
+<style>
+.strength-meter {
+    height: 5px;
+    width: 100%;
+    background-color: #e0e0e0;
+    margin-top: 5px;
+    border-radius: 3px;
+}
+
+.strength-meter div {
+    height: 100%;
+    width: 0;
+    background-color: red;
+    border-radius: 3px;
+    transition: width 0.3s ease-in-out;
+}
+
+.strength-meter.weak div {
+    width: 25%;
+    background-color: red;
+}
+
+.strength-meter.medium div {
+    width: 50%;
+    background-color: yellow;
+}
+
+.strength-meter.strong div {
+    width: 75%;
+    background-color: orange;
+}
+
+.strength-meter.very-strong div {
+    width: 100%;
+    background-color: green;
+}
+</style>
+</head>
+<body>
+
+	<!-- create navigation bar ( header) -->
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+					aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#" th:href="@{/}">Registration and
+					Login Module</a>
+			</div>
+		</div>
+	</nav>
+
+<br>
+<br>
+	<!-- Create HTML registration form -->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3">
+
+				<!-- success message -->
+				<div th:if="${param.success}">
+					<div class="alert alert-info">You've successfully registered
+						to our awesome app!</div>
+				</div>
+
+				<h1>Registration</h1>
+
+				<form th:action="@{/registration}" method="post" th:object="${user}">
+					<div class="form-group">
+						<label class="control-label" for="firstName"> First Name </label>
+						<input id="firstName" class="form-control" th:field="*{firstName}"
+							required autofocus="autofocus" />
+					</div>
+
+					<div class="form-group">
+						<label class="control-label" for="lastName"> Last Name </label> <input
+							id="lastName" class="form-control" th:field="*{lastName}"
+							required autofocus="autofocus" />
+					</div>
+
+					<div class="form-group">
+						<label class="control-label" for="email"> Email </label> <input
+							id="email" class="form-control" th:field="*{email}" required
+							autofocus="autofocus" />
+					</div>
+
+					<div class="form-group">
+						<label class="control-label" for="password"> Password </label> <input
+							id="password" class="form-control" type="password"
+							th:field="*{password}" required autofocus="autofocus" />
+						<div id="password-strength" class="strength-meter"><div></div></div>
+						<div id="password-strength-text"></div>
+					</div>
+
+					<div class="form-group">
+						<button type="submit" class="btn btn-success">Register</button>
+						<span>Already registered? <a href="/" th:href="@{/login}">Login
+								here</a></span>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+<script>
+document.getElementById('password').addEventListener('input', function() {
+    var password = this.value;
+    var strengthMeter = document.getElementById('password-strength');
+    var strengthText = document.getElementById('password-strength-text');
+    var strength = getPasswordStrength(password);
+
+    strengthMeter.className = 'strength-meter ' + strength.className;
+    strengthText.textContent = strength.text;
+});
+
+function getPasswordStrength(password) {
+    var strength = {
+        score: 0,
+        className: '',
+        text: ''
+    };
+
+    if (password.length >= 8) {
+        strength.score++;
+    }
+    if (password.match(/[A-Z]/)) {
+        strength.score++;
+    }
+    if (password.match(/[a-z]/)) {
+        strength.score++;
+    }
+    if (password.match(/[0-9]/)) {
+        strength.score++;
+    }
+    if (password.match(/[^A-Za-z0-9]/)) {
+        strength.score++;
+    }
+
+    switch (strength.score) {
+        case 0:
+        case 1:
+            strength.className = 'weak';
+            strength.text = 'Weak';
+            break;
+        case 2:
+        case 3:
+            strength.className = 'medium';
+            strength.text = 'Medium';
+            break;
+        case 4:
+            strength.className = 'strong';
+            strength.text = 'Strong';
+            break;
+        case 5:
+            strength.className = 'very-strong';
+            strength.text = 'Very Strong';
+            break;
+    }
+
+    return strength;
+}
+</script>
+
+</body>
+</html>
